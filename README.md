@@ -11,7 +11,7 @@ I built this tool as a hello-world to golang but ended up actually using it inst
   mill setdefaults
   mill list
   mill deploy REALMNAME
- `
+ ```
 
 # Note:
 Optionally you may set your telegram api keys to get the notifications about the deployments. Leave these fields empty if you don't need this feature.
