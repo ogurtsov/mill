@@ -55,7 +55,6 @@ func loadConfig() {
 }
 
 func TelegramSend(text string) {
-	logger := logrus.New()
 	api_key := config.TelegramAPIKey
 	chat_id := config.TelegramChatID
 
@@ -63,8 +62,6 @@ func TelegramSend(text string) {
 		fmt.Println("Telegram disabled")
 		return
 	}
-
-	logger.Info(fmt.Sprintf("Trying to send: %s\n", text))
 
 	output := make(map[string]interface{})
 
@@ -76,8 +73,6 @@ func TelegramSend(text string) {
 	if err := json.NewDecoder(response.Body).Decode(&output); err != nil {
 		panic(err)
 	}
-
-	logger.Info(fmt.Sprintf("Sending succeeded: %s\n", output))
 }
 
 func fileExists(filename string) bool {
@@ -111,7 +106,10 @@ func save() {
 
 func list() {
 	loadConfig()
-	fmt.Println(config.Realms)
+	fmt.Println("Available realms:")
+	for i := range config.Realms {
+		fmt.Println(config.Realms[i].Name)
+	}
 }
 
 func setdefaults() {
