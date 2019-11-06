@@ -1,4 +1,4 @@
-module github.com/ogurtsov/deploy5p
+module github.com/ogurtsov/mill
 
 go 1.13
 

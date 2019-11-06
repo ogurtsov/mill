@@ -11,9 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	// "github.com/ogurtsov/deploy5p/sshclient"
-
-	"github.com/ogurtsov/deploy5p/ssh"
+	"github.com/ogurtsov/mill/ssh"
 	"github.com/sirupsen/logrus"
 )
 
@@ -36,7 +34,7 @@ type Config struct {
 
 var config Config
 
-var path = ".deploy5p.json"
+var path = ".mill.json"
 
 func getFilePath() string {
 	usr, err := user.Current()
@@ -51,7 +49,7 @@ func loadConfig() {
 	configFile, _ := os.Open(filePath)
 	data, err := ioutil.ReadAll(configFile)
 	if err != nil {
-		// panic("Unable to load config")
+		panic("Unable to load config")
 	}
 	json.Unmarshal(data, &config)
 }
@@ -60,6 +58,11 @@ func TelegramSend(text string) {
 	logger := logrus.New()
 	api_key := config.TelegramAPIKey
 	chat_id := config.TelegramChatID
+
+	if "" == api_key || "" == chat_id {
+		fmt.Println("Telegram disabled")
+		return
+	}
 
 	logger.Info(fmt.Sprintf("Trying to send: %s\n", text))
 
@@ -91,8 +94,6 @@ func save() {
 		fmt.Println(err)
 		return
 	}
-	// fmt.Println(string(b))
-	// d1 := []byte("hello\ngo\n")
 
 	if fileExists(getFilePath()) {
 		panic("Default config file already created")
