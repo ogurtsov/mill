@@ -6,7 +6,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"strconv"
 	"strings"
+
+	"fmt"
+	"time"
 
 	"golang.org/x/crypto/ssh"
 )
@@ -61,7 +65,8 @@ func ConnectWithKey(addr, user, password, keyfile string) (*Connection, error) {
 	return &Connection{conn, password}, nil
 }
 
-func (conn *Connection) SendCommands(cmds ...string) ([]byte, error) {
+func (conn *Connection) SendCommands(cmds []string) ([]byte, error) {
+
 	session, err := conn.NewSession()
 	if err != nil {
 		log.Fatal(err)
@@ -105,6 +110,9 @@ func (conn *Connection) SendCommands(cmds ...string) ([]byte, error) {
 			*output = append(*output, b)
 
 			if b == byte('\n') {
+				if line != "" {
+					fmt.Println(line)
+				}
 				line = ""
 				continue
 			}
@@ -120,10 +128,16 @@ func (conn *Connection) SendCommands(cmds ...string) ([]byte, error) {
 		}
 	}(in, out, &output)
 
-	cmd := strings.Join(cmds, "; ")
-	_, err = session.Output(cmd)
-	if err != nil {
-		return []byte{}, err
+	for index := range cmds {
+		cmd := cmds[index]
+		// fmt.Println("\n")
+		fmt.Println(strconv.Itoa(index+1) + ". Running " + cmd + "...")
+		_, err = session.Output(cmd)
+		if err != nil {
+			fmt.Println("^ failed")
+			return []byte{}, err
+		}
+		time.Sleep(1000 * time.Millisecond)
 	}
 
 	return output, nil

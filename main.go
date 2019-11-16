@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/user"
 	"strconv"
-	"strings"
 
 	"github.com/ogurtsov/mill/ssh"
 	"github.com/sirupsen/logrus"
@@ -145,13 +144,10 @@ func initDeploy(Realm RealmConfig) {
 		panic(err)
 	}
 
-	commands := strings.Join(Realm.Commands, " && ")
-	fmt.Println(commands)
-	output, err := connection.SendCommands(commands)
+	_, err = connection.SendCommands(Realm.Commands)
 	if err != nil {
-		panic(err)
+		return
 	}
-	logrus.Info(string(output))
 
 	logrus.Info("Deploy for <" + Realm.Name + "> finished!")
 	TelegramSend("Deploy for <" + Realm.Name + "> finished!")
