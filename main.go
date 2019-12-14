@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/user"
 	"strconv"
+	"strings"
 
 	"github.com/ogurtsov/mill/ssh"
 	"github.com/sirupsen/logrus"
@@ -130,8 +131,8 @@ func setdefaults() {
 }
 
 func initDeploy(Realm RealmConfig) {
-	logrus.Info("Deploy for <" + Realm.Name + "> started...")
-	TelegramSend("Starting deploy for realm <" + Realm.Name + ">")
+	logrus.Info("Deploy for <" + Realm.Name + "> started!")
+	// TelegramSend("Starting deploy for realm <" + Realm.Name + ">")
 	host := Realm.Host + ":" + strconv.Itoa(Realm.Port)
 
 	usr, err := user.Current()
@@ -143,14 +144,15 @@ func initDeploy(Realm RealmConfig) {
 	if err != nil {
 		panic(err)
 	}
+	logrus.Info("Connection established")
 
-	_, err = connection.SendCommands(Realm.Commands)
+	_, err = connection.SendCommand(strings.Join(Realm.Commands[:], " && "))
 	if err != nil {
 		return
 	}
 
 	logrus.Info("Deploy for <" + Realm.Name + "> finished!")
-	TelegramSend("Deploy for <" + Realm.Name + "> finished!")
+	// TelegramSend("Deploy for <" + Realm.Name + "> finished!")
 }
 
 func deploy(RealmName string) {
