@@ -8,8 +8,6 @@ import (
 	"net"
 	"strings"
 
-	"fmt"
-
 	"golang.org/x/crypto/ssh"
 )
 
@@ -109,7 +107,7 @@ func (conn *Connection) SendCommand(command string) ([]byte, error) {
 
 			if b == byte('\n') {
 				if line != "" {
-					fmt.Println(line)
+					log.Print(line)
 				}
 				line = ""
 				continue
@@ -126,13 +124,13 @@ func (conn *Connection) SendCommand(command string) ([]byte, error) {
 		}
 	}(in, out, &output)
 
-	fmt.Println("Running " + command + "...")
+	log.Print("Running " + command + "...")
 
 	_, err = session.Output(command)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("\tSucceeded!")
+	log.Print("\tSucceeded!")
 
 	return output, nil
 }
